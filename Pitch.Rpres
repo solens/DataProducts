@@ -1,0 +1,41 @@
+Data Products Project Pitch
+========================================================
+author: Solen Sanschagrin
+date: February 28, 2016
+
+========================================================
+
+This very simple app gives an estimation of the price of round cut diamond based on the number of carats and the quality of the cut. The estimation is based on a model generated from the diamonds data available in the ggplot2 package.
+
+Data 
+========================================================
+```{r, echo=FALSE}
+require(ggplot2)
+require(dplyr)
+ggplot(aes(x = carat, y = log10(price)), data = diamonds) + 
+  geom_point(alpha = 0.5, size = 1, position = 'jitter',aes(color=cut)) +
+  scale_color_brewer(type = 'div',
+    guide = guide_legend(title = 'Cut', reverse = T)) + 
+  scale_x_continuous(limits = c(0,4)) +
+  ggtitle('log of Price with respect to Number of Carat and Quality of the Cut')
+```
+
+
+Model
+========================================================
+The model is taken as linear with respect to the log of the price using `lm(I(log10(price))~carat+cut,data=diamonds)`. As can be seen below on the residual plots, the predictions are good for all cut qualities but seem to overestimate price for high carat values. The number of carats in the app only goes up to 6 to limit extrapolation.
+```{r, echo=FALSE}
+require(ggplot2)
+require(caret)
+```
+```{r, echo=FALSE}
+model<-lm(I(log10(price))~carat+cut,data=diamonds)
+par(mfrow=c(1,2))
+plot(y=model$residuals,x=diamonds$carat)
+plot(y=model$residuals,x=diamonds$cut)
+```
+
+Conclusion
+========================================================
+
+This predictor could be a lot better but, at least, it works.
